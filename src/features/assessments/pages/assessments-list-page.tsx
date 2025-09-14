@@ -457,79 +457,90 @@ export const AssessmentsListPage: React.FC = () => {
           open={showJobSelectionModal}
           onOpenChange={setShowJobSelectionModal}
         >
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Select Assessment Type</DialogTitle>
-              <DialogDescription>
+          <DialogContent className="sm:max-w-[500px] max-h-[80vh] flex flex-col border border-gray-700 bg-[#0d1025]">
+            <DialogHeader className="flex-shrink-0">
+              <DialogTitle className="text-white">
+                Select Assessment Type
+              </DialogTitle>
+              <DialogDescription className="text-gray-300">
                 Choose to create a job-specific assessment or a standalone
                 assessment that can be used for multiple positions.
               </DialogDescription>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
-              {/* Standalone Assessment Option */}
-              <Card
-                className="cursor-pointer hover:shadow-md transition-shadow border-2 border-blue-200 bg-blue-50"
-                onClick={() => handleJobSelection()}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-semibold text-blue-900">
-                        🎯 Standalone Assessment
-                      </h4>
-                      <p className="text-sm text-blue-700">
-                        Create a general assessment that can be used for any
-                        position
-                      </p>
-                      <Badge className="mt-1 bg-blue-600 text-white">
-                        Recommended
-                      </Badge>
+
+            <div className="flex-1 overflow-y-auto pr-2 -mr-2">
+              <div className="grid gap-4 py-4">
+                {/* Standalone Assessment Option */}
+                <Card
+                  className="cursor-pointer hover:shadow-lg transition-all duration-300 border-2 border-blue-500 bg-blue-900/20 hover:bg-blue-800/30 hover:border-blue-400"
+                  onClick={() => handleJobSelection()}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-semibold text-blue-300">
+                          🎯 Standalone Assessment
+                        </h4>
+                        <p className="text-sm text-blue-200">
+                          Create a general assessment that can be used for any
+                          position
+                        </p>
+                        <Badge className="mt-1 bg-blue-600 text-white hover:bg-blue-700">
+                          Recommended
+                        </Badge>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Job-Specific Options */}
+                {Array.isArray(jobs) && jobs.length > 0 && (
+                  <div className="space-y-3">
+                    <h5 className="text-sm font-medium text-gray-400 border-t border-gray-600 pt-3">
+                      Or associate with a specific job:
+                    </h5>
+                    <div className="space-y-2 max-h-60 overflow-y-auto">
+                      {jobs.map((job) => (
+                        <Card
+                          key={job.id}
+                          className="cursor-pointer hover:shadow-lg transition-all duration-300 border border-gray-600 bg-gray-800/50 hover:bg-gray-700/70 hover:border-gray-500"
+                          onClick={() => handleJobSelection(job.id)}
+                        >
+                          <CardContent className="p-3">
+                            <div className="flex items-center justify-between">
+                              <div className="min-w-0 flex-1">
+                                <h4 className="font-semibold truncate text-white">
+                                  {job.title}
+                                </h4>
+                                <p className="text-sm text-gray-400 truncate">
+                                  {job.location}
+                                </p>
+                                <Badge
+                                  variant={
+                                    job.status === "active"
+                                      ? "default"
+                                      : "secondary"
+                                  }
+                                  className="mt-1"
+                                >
+                                  {job.status}
+                                </Badge>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-
-              {/* Job-Specific Options */}
-              {Array.isArray(jobs) && jobs.length > 0 && (
-                <div className="space-y-2">
-                  <h5 className="text-sm font-medium text-gray-600 border-t pt-3">
-                    Or associate with a specific job:
-                  </h5>
-                  {jobs.map((job) => (
-                    <Card
-                      key={job.id}
-                      className="cursor-pointer hover:shadow-md transition-shadow"
-                      onClick={() => handleJobSelection(job.id)}
-                    >
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-semibold">{job.title}</h4>
-                            <p className="text-sm text-muted-foreground">
-                              {job.location}
-                            </p>
-                            <Badge
-                              variant={
-                                job.status === "active"
-                                  ? "default"
-                                  : "secondary"
-                              }
-                              className="mt-1"
-                            >
-                              {job.status}
-                            </Badge>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              )}
+                )}
+              </div>
             </div>
-            <DialogFooter>
+
+            <DialogFooter className="flex-shrink-0 border-t border-gray-600 pt-4">
               <Button
                 variant="outline"
                 onClick={() => setShowJobSelectionModal(false)}
+                className="border-gray-600 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
               >
                 Cancel
               </Button>
