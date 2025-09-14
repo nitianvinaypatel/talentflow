@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useLocation } from "react-router-dom";
 import { SidebarTrigger } from "../ui/sidebar";
-import { ThemeToggle } from "../ui/theme-toggle";
 import { getPageTitle } from "../../lib/utils/page-titles";
 
 export const Header: React.FC = () => {
@@ -20,9 +19,6 @@ export const Header: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-4">
-          {/* Theme Toggle */}
-          <ThemeToggle />
-
           {/* User menu placeholder - will be implemented later */}
           <div className="h-8 w-8 bg-gray-700 rounded-full flex items-center justify-center">
             <span className="text-xs font-medium text-gray-300">HR</span>

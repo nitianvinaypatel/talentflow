@@ -16,7 +16,7 @@ declare global {
 }
 
 export const App = () => (
-  <ThemeProvider defaultTheme="system" storageKey="talentflow-theme">
+  <ThemeProvider defaultTheme="dark" storageKey="talentflow-theme">
     <PageErrorBoundary>
       <RouterProvider router={router} />
     </PageErrorBoundary>
