@@ -4,7 +4,7 @@ A comprehensive, modern hiring platform built with React, TypeScript, and cuttin
 
 ## � Live Demo & Repository
 
-### 🚀 **[View Live Application →](https://your-deployed-url.vercel.app)**
+### 🚀 **[View Live Application →](https://talentflow-entnt.vercel.app/)**
 
 ### 📂 **[GitHub Repository →](https://github.com/nitianvinaypatel/talentflow)**
 
