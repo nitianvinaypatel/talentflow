@@ -2,7 +2,27 @@
 
 A comprehensive, modern hiring platform built with React, TypeScript, and cutting-edge web technologies. TalentFlow streamlines the entire recruitment process from job posting to candidate assessment and hiring decisions.
 
-## 🎯 Requirements:
+## � Live Demo & Repository
+
+### 🚀 **[View Live Application →](https://your-deployed-url.vercel.app)**
+
+### 📂 **[GitHub Repository →](https://github.com/nitianvinaypatel/talentflow)**
+
+---
+
+## 📸 Application Screenshots
+
+### Dashboard Overview
+
+<div align="center">
+  <img src="./screenshots/dashboard.png" alt="TalentFlow Dashboard" width="800" />
+  <br />
+  <em>Main dashboard showing hiring pipeline overview and key metrics</em>
+</div>
+
+---
+
+## �🎯 Requirements:
 
 ### ✅ **Core Flows Implemented**
 
@@ -60,6 +80,12 @@ POST   /api/assessments/:jobId/submit
 - **❌ Error Simulation**: 5-10% failure rate on write operations with proper error handling
 - **💾 Local Persistence**: IndexedDB via Dexie for all data with write-through from MSW
 - **🔄 State Restoration**: Complete application state restored from IndexedDB on page refresh
+
+## 🌐 Live Demo
+
+🚀 **[View Live Application](https://talentflow-entnt.vercel.app/)**
+
+📁 **[GitHub Repository](https://github.com/nitianvinaypatel/talentflow)**
 
 ## 🚀 Features
 
