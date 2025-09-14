@@ -41,36 +41,36 @@ const getTimelineIcon = (type: TimelineEvent["type"]) => {
 const getTimelineColor = (type: TimelineEvent["type"]) => {
   switch (type) {
     case "stage_change":
-      return "text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-950/50";
+      return "text-blue-400 bg-blue-600/20";
     case "note_added":
-      return "text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-950/50";
+      return "text-purple-400 bg-purple-600/20";
     case "assessment_submitted":
-      return "text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-950/50";
+      return "text-green-400 bg-green-600/20";
     case "interview_scheduled":
-      return "text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/50";
+      return "text-amber-400 bg-amber-600/20";
     case "application_received":
-      return "text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-950/50";
+      return "text-gray-400 bg-gray-600/20";
     default:
-      return "text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-950/50";
+      return "text-gray-400 bg-gray-600/20";
   }
 };
 
 const getStageColor = (stage: Candidate["stage"]) => {
   switch (stage) {
     case "applied":
-      return "bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800";
+      return "bg-blue-600/20 text-blue-400 border-blue-500/30";
     case "screen":
-      return "bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800";
+      return "bg-amber-600/20 text-amber-400 border-amber-500/30";
     case "tech":
-      return "bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800";
+      return "bg-purple-600/20 text-purple-400 border-purple-500/30";
     case "offer":
-      return "bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800";
+      return "bg-emerald-600/20 text-emerald-400 border-emerald-500/30";
     case "hired":
-      return "bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800";
+      return "bg-green-600/20 text-green-400 border-green-500/30";
     case "rejected":
-      return "bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800";
+      return "bg-red-600/20 text-red-400 border-red-500/30";
     default:
-      return "bg-gray-100 dark:bg-gray-950/50 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-800";
+      return "bg-gray-600/20 text-gray-400 border-gray-500/30";
   }
 };
 
@@ -98,18 +98,21 @@ export const CandidateTimeline: React.FC<CandidateTimelineProps> = ({
 
   if (!timeline || timeline.length === 0) {
     return (
-      <Card className="shadow-sm">
+      <Card
+        className="shadow-sm border border-gray-700"
+        style={{ backgroundColor: "#0d1025" }}
+      >
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Clock className="h-5 w-5 text-primary" />
+          <CardTitle className="flex items-center gap-2 text-lg text-white">
+            <Clock className="h-5 w-5 text-blue-400" />
             Timeline
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-8 text-center">
-            <Clock className="h-12 w-12 text-muted-foreground/50 mb-4" />
-            <p className="text-muted-foreground">No timeline events yet</p>
-            <p className="text-sm text-muted-foreground/70">
+            <Clock className="h-12 w-12 text-gray-400 mb-4" />
+            <p className="text-gray-300">No timeline events yet</p>
+            <p className="text-sm text-gray-400">
               Events will appear here as the candidate progresses
             </p>
           </div>
@@ -119,10 +122,13 @@ export const CandidateTimeline: React.FC<CandidateTimelineProps> = ({
   }
 
   return (
-    <Card className="shadow-sm">
+    <Card
+      className="shadow-sm border border-gray-700"
+      style={{ backgroundColor: "#0d1025" }}
+    >
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <Clock className="h-5 w-5 text-primary" />
+        <CardTitle className="flex items-center gap-2 text-lg text-white">
+          <Clock className="h-5 w-5 text-blue-400" />
           Timeline
         </CardTitle>
       </CardHeader>
@@ -132,13 +138,13 @@ export const CandidateTimeline: React.FC<CandidateTimelineProps> = ({
             <div key={event.id} className="relative">
               {/* Timeline line */}
               {index < sortedTimeline.length - 1 && (
-                <div className="absolute left-6 top-12 bottom-0 w-px bg-border" />
+                <div className="absolute left-6 top-12 bottom-0 w-px bg-gray-700" />
               )}
 
               <div className="flex gap-4">
                 {/* Timeline icon */}
                 <div
-                  className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-background ${getTimelineColor(
+                  className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-gray-700 ${getTimelineColor(
                     event.type
                   )}`}
                 >
@@ -149,11 +155,11 @@ export const CandidateTimeline: React.FC<CandidateTimelineProps> = ({
                 <div className="flex-1 space-y-2 pb-6">
                   <div className="flex items-start justify-between">
                     <div className="space-y-1">
-                      <p className="font-medium text-foreground">
+                      <p className="font-medium text-white">
                         {formatEventDescription(event)}
                       </p>
                       {event.authorName && (
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-gray-400">
                           by {event.authorName}
                         </p>
                       )}
@@ -172,7 +178,7 @@ export const CandidateTimeline: React.FC<CandidateTimelineProps> = ({
                             >
                               {event.metadata.previousStage}
                             </Badge>
-                            <span className="text-muted-foreground">→</span>
+                            <span className="text-gray-400">→</span>
                             <Badge
                               variant="outline"
                               className={getStageColor(
@@ -186,14 +192,14 @@ export const CandidateTimeline: React.FC<CandidateTimelineProps> = ({
                     </div>
 
                     <div className="text-right">
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-gray-400">
                         {new Date(event.timestamp).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
                           year: "numeric",
                         })}
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-gray-400">
                         {new Date(event.timestamp).toLocaleTimeString("en-US", {
                           hour: "2-digit",
                           minute: "2-digit",

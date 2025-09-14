@@ -264,9 +264,7 @@ export const NotesEditor = ({ candidateId }: NotesEditorProps) => {
         )}
 
         <div className="flex justify-between items-center mt-2">
-          <p className="text-xs text-muted-foreground">
-            Press Cmd+Enter to submit
-          </p>
+          <p className="text-xs text-gray-400">Press Cmd+Enter to submit</p>
           <Button
             onClick={handleSubmitNote}
             disabled={!newNote.trim() || isSubmitting}

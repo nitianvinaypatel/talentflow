@@ -32,34 +32,34 @@ const stageColors: Record<
   { bg: string; text: string; border: string }
 > = {
   applied: {
-    bg: "bg-blue-50 dark:bg-blue-950/50",
-    text: "text-blue-700 dark:text-blue-300",
-    border: "border-blue-200 dark:border-blue-800",
+    bg: "bg-blue-600/20",
+    text: "text-blue-400",
+    border: "border-blue-500/30",
   },
   screen: {
-    bg: "bg-amber-50 dark:bg-amber-950/50",
-    text: "text-amber-700 dark:text-amber-300",
-    border: "border-amber-200 dark:border-amber-800",
+    bg: "bg-amber-600/20",
+    text: "text-amber-400",
+    border: "border-amber-500/30",
   },
   tech: {
-    bg: "bg-purple-50 dark:bg-purple-950/50",
-    text: "text-purple-700 dark:text-purple-300",
-    border: "border-purple-200 dark:border-purple-800",
+    bg: "bg-purple-600/20",
+    text: "text-purple-400",
+    border: "border-purple-500/30",
   },
   offer: {
-    bg: "bg-emerald-50 dark:bg-emerald-950/50",
-    text: "text-emerald-700 dark:text-emerald-300",
-    border: "border-emerald-200 dark:border-emerald-800",
+    bg: "bg-emerald-600/20",
+    text: "text-emerald-400",
+    border: "border-emerald-500/30",
   },
   hired: {
-    bg: "bg-green-50 dark:bg-green-950/50",
-    text: "text-green-700 dark:text-green-300",
-    border: "border-green-200 dark:border-green-800",
+    bg: "bg-green-600/20",
+    text: "text-green-400",
+    border: "border-green-500/30",
   },
   rejected: {
-    bg: "bg-red-50 dark:bg-red-950/50",
-    text: "text-red-700 dark:text-red-300",
-    border: "border-red-200 dark:border-red-800",
+    bg: "bg-red-600/20",
+    text: "text-red-400",
+    border: "border-red-500/30",
   },
 };
 
@@ -223,16 +223,22 @@ const CandidateProfile: React.FC<CandidateProfileProps> = ({
   // Handle case where candidate is undefined or missing required properties
   if (!candidate || !candidate.stage) {
     return (
-      <div className="container mx-auto max-w-4xl p-6">
-        <Card className="border-destructive/20">
+      <div
+        className="container mx-auto max-w-4xl p-6"
+        style={{ backgroundColor: "#000319", minHeight: "100vh" }}
+      >
+        <Card
+          className="border border-red-500/30"
+          style={{ backgroundColor: "#0d1025" }}
+        >
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-destructive">
+            <CardTitle className="flex items-center gap-2 text-red-400">
               <User className="h-5 w-5" />
               No Candidate Data
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground mb-4">
+            <p className="text-gray-400 mb-4">
               Candidate information is not available or incomplete.
             </p>
             {onClose && (
@@ -248,9 +254,9 @@ const CandidateProfile: React.FC<CandidateProfileProps> = ({
   }
 
   const stageStyle = stageColors[candidate.stage] || {
-    bg: "bg-gray-50 dark:bg-gray-950/50",
-    text: "text-gray-700 dark:text-gray-300",
-    border: "border-gray-200 dark:border-gray-800",
+    bg: "bg-gray-600/20",
+    text: "text-gray-300",
+    border: "border-gray-500/30",
   };
 
   const handleAddNote = (content: string, mentions: Mention[]) => {
@@ -282,22 +288,28 @@ const CandidateProfile: React.FC<CandidateProfileProps> = ({
   };
 
   return (
-    <div className="container mx-auto max-w-7xl p-6 space-y-6 animate-in fade-in-50 duration-500">
+    <div
+      className="container mx-auto max-w-7xl p-6 space-y-6 animate-in fade-in-50 duration-500"
+      style={{ backgroundColor: "#000319", minHeight: "100vh" }}
+    >
       {/* Header Card */}
-      <Card className="overflow-hidden border-border/50 shadow-sm">
-        <div className="bg-gradient-to-r from-primary/5 to-primary/10 border-b">
+      <Card
+        className="overflow-hidden border border-gray-700 shadow-sm"
+        style={{ backgroundColor: "#0d1025" }}
+      >
+        <div className="bg-gradient-to-r from-primary/5 to-primary/10 border-b border-gray-700">
           <CardHeader className="pb-6">
             <div className="flex items-start justify-between">
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                    <User className="h-6 w-6 text-primary" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600/20">
+                    <User className="h-6 w-6 text-blue-400" />
                   </div>
                   <div>
-                    <CardTitle className="text-2xl text-foreground font-semibold">
+                    <CardTitle className="text-2xl text-white font-semibold">
                       {candidate.name || "Unknown Candidate"}
                     </CardTitle>
-                    <p className="text-muted-foreground">Candidate Profile</p>
+                    <p className="text-gray-400">Candidate Profile</p>
                   </div>
                 </div>
                 <Badge
@@ -326,43 +338,49 @@ const CandidateProfile: React.FC<CandidateProfileProps> = ({
         {/* Left Column - Main Info */}
         <div className="lg:col-span-2 space-y-6">
           {/* Contact Information */}
-          <Card className="shadow-sm">
+          <Card
+            className="shadow-sm border border-gray-700"
+            style={{ backgroundColor: "#0d1025" }}
+          >
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Mail className="h-5 w-5 text-primary" />
+              <CardTitle className="flex items-center gap-2 text-lg text-white">
+                <Mail className="h-5 w-5 text-blue-400" />
                 Contact Information
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4">
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-                  <Mail className="h-4 w-4 text-muted-foreground" />
+                <div
+                  className="flex items-center gap-3 p-3 rounded-lg"
+                  style={{ backgroundColor: "rgba(255,255,255,0.02)" }}
+                >
+                  <Mail className="h-4 w-4 text-gray-400" />
                   <div>
-                    <p className="font-medium text-foreground">
-                      {candidate.email}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Email Address
-                    </p>
+                    <p className="font-medium text-white">{candidate.email}</p>
+                    <p className="text-sm text-gray-400">Email Address</p>
                   </div>
                 </div>
                 {candidate.phone && (
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
+                  <div
+                    className="flex items-center gap-3 p-3 rounded-lg"
+                    style={{ backgroundColor: "rgba(255,255,255,0.02)" }}
+                  >
+                    <Phone className="h-4 w-4 text-gray-400" />
                     <div>
-                      <p className="font-medium text-foreground">
+                      <p className="font-medium text-white">
                         {candidate.phone}
                       </p>
-                      <p className="text-sm text-muted-foreground">
-                        Phone Number
-                      </p>
+                      <p className="text-sm text-gray-400">Phone Number</p>
                     </div>
                   </div>
                 )}
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                <div
+                  className="flex items-center gap-3 p-3 rounded-lg"
+                  style={{ backgroundColor: "rgba(255,255,255,0.02)" }}
+                >
+                  <Calendar className="h-4 w-4 text-gray-400" />
                   <div>
-                    <p className="font-medium text-foreground">
+                    <p className="font-medium text-white">
                       {new Date(candidate.appliedAt).toLocaleDateString(
                         "en-US",
                         {
@@ -372,9 +390,7 @@ const CandidateProfile: React.FC<CandidateProfileProps> = ({
                         }
                       )}
                     </p>
-                    <p className="text-sm text-muted-foreground">
-                      Application Date
-                    </p>
+                    <p className="text-sm text-gray-400">Application Date</p>
                   </div>
                 </div>
               </div>
@@ -383,22 +399,28 @@ const CandidateProfile: React.FC<CandidateProfileProps> = ({
 
           {/* Resume */}
           {candidate.resume && (
-            <Card className="shadow-sm">
+            <Card
+              className="shadow-sm border border-gray-700"
+              style={{ backgroundColor: "#0d1025" }}
+            >
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <FileText className="h-5 w-5 text-primary" />
+                <CardTitle className="flex items-center gap-2 text-lg text-white">
+                  <FileText className="h-5 w-5 text-blue-400" />
                   Resume & Documents
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center justify-between p-4 rounded-lg border border-border/50 bg-card">
+                <div
+                  className="flex items-center justify-between p-4 rounded-lg border border-gray-700"
+                  style={{ backgroundColor: "rgba(255,255,255,0.02)" }}
+                >
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                      <FileText className="h-5 w-5 text-primary" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600/20">
+                      <FileText className="h-5 w-5 text-blue-400" />
                     </div>
                     <div>
-                      <p className="font-medium text-foreground">Resume.pdf</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="font-medium text-white">Resume.pdf</p>
+                      <p className="text-sm text-gray-400">
                         Click to view document
                       </p>
                     </div>
@@ -422,10 +444,13 @@ const CandidateProfile: React.FC<CandidateProfileProps> = ({
           {/* Assessment Responses */}
           {candidate.assessmentResponses &&
             candidate.assessmentResponses.length > 0 && (
-              <Card className="shadow-sm">
+              <Card
+                className="shadow-sm border border-gray-700"
+                style={{ backgroundColor: "#0d1025" }}
+              >
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <ClipboardList className="h-5 w-5 text-primary" />
+                  <CardTitle className="flex items-center gap-2 text-lg text-white">
+                    <ClipboardList className="h-5 w-5 text-blue-400" />
                     Assessment Results
                   </CardTitle>
                 </CardHeader>
@@ -434,17 +459,18 @@ const CandidateProfile: React.FC<CandidateProfileProps> = ({
                     {candidate.assessmentResponses.map((response, index) => (
                       <div
                         key={index}
-                        className="flex items-center justify-between p-4 rounded-lg border border-border/50 bg-card"
+                        className="flex items-center justify-between p-4 rounded-lg border border-gray-700"
+                        style={{ backgroundColor: "rgba(255,255,255,0.02)" }}
                       >
                         <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-950/50">
-                            <Award className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-600/20">
+                            <Award className="h-5 w-5 text-emerald-400" />
                           </div>
                           <div>
-                            <p className="font-medium text-foreground">
+                            <p className="font-medium text-white">
                               Assessment #{index + 1}
                             </p>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-gray-400">
                               Completed on{" "}
                               {new Date(
                                 response.submittedAt || new Date()
@@ -458,7 +484,7 @@ const CandidateProfile: React.FC<CandidateProfileProps> = ({
                         </div>
                         <Badge
                           variant="outline"
-                          className="bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
+                          className="bg-emerald-600/20 text-emerald-400 border-emerald-500/30"
                         >
                           Completed
                         </Badge>
@@ -476,16 +502,19 @@ const CandidateProfile: React.FC<CandidateProfileProps> = ({
         {/* Right Column - Notes & Stats */}
         <div className="space-y-6">
           {/* Quick Stats */}
-          <Card className="shadow-sm">
+          <Card
+            className="shadow-sm border border-gray-700"
+            style={{ backgroundColor: "#0d1025" }}
+          >
             <CardHeader>
-              <CardTitle className="text-lg">Application Summary</CardTitle>
+              <CardTitle className="text-lg text-white">
+                Application Summary
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">
-                    Current Stage
-                  </span>
+                  <span className="text-sm text-gray-400">Current Stage</span>
                   <Badge
                     variant="outline"
                     className={`${stageStyle.bg} ${stageStyle.text} ${stageStyle.border} text-xs`}
@@ -495,12 +524,12 @@ const CandidateProfile: React.FC<CandidateProfileProps> = ({
                       "Unknown"}
                   </Badge>
                 </div>
-                <Separator />
+                <Separator className="bg-gray-700" />
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-sm text-gray-400">
                     Days Since Applied
                   </span>
-                  <span className="text-sm font-medium">
+                  <span className="text-sm font-medium text-white">
                     {Math.floor(
                       (Date.now() - new Date(candidate.appliedAt).getTime()) /
                         (1000 * 60 * 60 * 24)
@@ -508,22 +537,22 @@ const CandidateProfile: React.FC<CandidateProfileProps> = ({
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">
-                    Assessments
-                  </span>
-                  <span className="text-sm font-medium">
+                  <span className="text-sm text-gray-400">Assessments</span>
+                  <span className="text-sm font-medium text-white">
                     {candidate.assessmentResponses?.length || 0}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Notes</span>
-                  <span className="text-sm font-medium">{notes.length}</span>
+                  <span className="text-sm text-gray-400">Notes</span>
+                  <span className="text-sm font-medium text-white">
+                    {notes.length}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">
-                    Timeline Events
+                  <span className="text-sm text-gray-400">Timeline Events</span>
+                  <span className="text-sm font-medium text-white">
+                    {timeline.length}
                   </span>
-                  <span className="text-sm font-medium">{timeline.length}</span>
                 </div>
               </div>
             </CardContent>

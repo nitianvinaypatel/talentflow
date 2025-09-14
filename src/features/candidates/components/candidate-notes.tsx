@@ -197,7 +197,7 @@ export const CandidateNotes: React.FC<CandidateNotesProps> = ({
       const mentionRegex = new RegExp(`@${mention.name}`, "g");
       formattedContent = formattedContent.replace(
         mentionRegex,
-        `<span class="mention bg-primary/10 text-primary px-1 py-0.5 rounded text-sm font-medium">@${mention.name}</span>`
+        `<span class="mention bg-blue-600/20 text-blue-400 px-1 py-0.5 rounded text-sm font-medium border border-blue-500/30">@${mention.name}</span>`
       );
     });
 
@@ -224,10 +224,13 @@ export const CandidateNotes: React.FC<CandidateNotesProps> = ({
   );
 
   return (
-    <Card className="shadow-sm">
+    <Card
+      className="shadow-sm border border-gray-700"
+      style={{ backgroundColor: "#0d1025" }}
+    >
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <MessageSquare className="h-5 w-5 text-primary" />
+        <CardTitle className="flex items-center gap-2 text-lg text-white">
+          <MessageSquare className="h-5 w-5 text-blue-400" />
           Notes & Comments
         </CardTitle>
       </CardHeader>
@@ -246,8 +249,9 @@ export const CandidateNotes: React.FC<CandidateNotesProps> = ({
           {showMentions && filteredSuggestions.length > 0 && (
             <div
               ref={mentionDropdownRef}
-              className="fixed z-50 w-72 bg-popover border border-border rounded-md shadow-lg max-h-60 overflow-y-auto"
+              className="fixed z-50 w-72 border border-gray-600 rounded-md shadow-lg max-h-60 overflow-y-auto"
               style={{
+                backgroundColor: "#0d1025",
                 top: mentionPosition.top,
                 left: mentionPosition.left,
               }}
@@ -255,7 +259,7 @@ export const CandidateNotes: React.FC<CandidateNotesProps> = ({
               {filteredSuggestions.map((suggestion) => (
                 <button
                   key={suggestion.id}
-                  className="w-full text-left px-3 py-2 hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2"
+                  className="w-full text-left px-3 py-2 hover:bg-gray-700 text-white transition-colors flex items-center gap-2"
                   onClick={() => insertMention(suggestion)}
                 >
                   <div
@@ -274,10 +278,10 @@ export const CandidateNotes: React.FC<CandidateNotesProps> = ({
                     />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">
+                    <p className="text-sm font-medium truncate text-white">
                       {suggestion.name}
                     </p>
-                    <p className="text-xs text-muted-foreground truncate">
+                    <p className="text-xs text-gray-400 truncate">
                       {suggestion.email}
                     </p>
                   </div>
@@ -299,7 +303,7 @@ export const CandidateNotes: React.FC<CandidateNotesProps> = ({
           {/* Selected mentions */}
           {selectedMentions.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              <span className="text-sm text-muted-foreground">Mentions:</span>
+              <span className="text-sm text-gray-400">Mentions:</span>
               {selectedMentions.map((mention) => (
                 <Badge key={mention.id} variant="secondary" className="text-xs">
                   <AtSign className="h-3 w-3 mr-1" />
@@ -330,9 +334,9 @@ export const CandidateNotes: React.FC<CandidateNotesProps> = ({
         <div className="space-y-4">
           {sortedNotes.length === 0 ? (
             <div className="text-center py-8">
-              <MessageSquare className="h-12 w-12 text-muted-foreground/50 mx-auto mb-4" />
-              <p className="text-muted-foreground">No notes yet</p>
-              <p className="text-sm text-muted-foreground/70">
+              <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-300">No notes yet</p>
+              <p className="text-sm text-gray-400">
                 Add the first note to start tracking this candidate's progress
               </p>
             </div>
@@ -340,12 +344,13 @@ export const CandidateNotes: React.FC<CandidateNotesProps> = ({
             sortedNotes.map((note) => (
               <div
                 key={note.id}
-                className="border border-border rounded-lg p-4 space-y-3"
+                className="border border-gray-700 rounded-lg p-4 space-y-3"
+                style={{ backgroundColor: "rgba(255,255,255,0.02)" }}
               >
                 <div className="flex items-start justify-between">
                   <div className="space-y-2 flex-1">
                     <div
-                      className="text-sm text-foreground leading-relaxed"
+                      className="text-sm text-white leading-relaxed"
                       dangerouslySetInnerHTML={formatNoteContent(
                         note.content,
                         note.mentions || []
@@ -359,7 +364,7 @@ export const CandidateNotes: React.FC<CandidateNotesProps> = ({
                           <Badge
                             key={mention.id}
                             variant="outline"
-                            className="text-xs bg-primary/10 text-primary border-primary/20"
+                            className="text-xs bg-blue-600/20 text-blue-400 border-blue-500/30"
                           >
                             <AtSign className="h-3 w-3 mr-1" />
                             {mention.name}
@@ -393,7 +398,7 @@ export const CandidateNotes: React.FC<CandidateNotesProps> = ({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 text-xs text-muted-foreground border-t border-border pt-2">
+                <div className="flex items-center gap-2 text-xs text-gray-400 border-t border-gray-700 pt-2">
                   <Clock className="h-3 w-3" />
                   <span>
                     {note.authorName} •{" "}
