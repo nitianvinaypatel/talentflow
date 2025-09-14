@@ -2,11 +2,9 @@
 
 A comprehensive, modern hiring platform built with React, TypeScript, and cutting-edge web technologies. TalentFlow streamlines the entire recruitment process from job posting to candidate assessment and hiring decisions.
 
-## � Live Demo & Repository
+## 🚀 Live Demo
 
-### 🚀 **[View Live Application →](https://talentflow-entnt.vercel.app/)**
-
-### 📂 **[GitHub Repository →](https://github.com/nitianvinaypatel/talentflow)**
+### **[View Live Application](https://talentflow-entnt.vercel.app/)**
 
 ---
 
