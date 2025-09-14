@@ -73,17 +73,11 @@ POST   /api/assessments/:jobId/submit
 
 ### ✅ **Data Requirements Met**
 
-- **🎲 Seed Data**: 25+ jobs (mixed active/archived), 1000+ candidates across all stages, 3+ comprehensive assessments
-- **⏱️ Network Simulation**: 200-1200ms artificial latency on all requests
-- **❌ Error Simulation**: 5-10% failure rate on write operations with proper error handling
-- **💾 Local Persistence**: IndexedDB via Dexie for all data with write-through from MSW
-- **🔄 State Restoration**: Complete application state restored from IndexedDB on page refresh
-
-## 🌐 Live Demo
-
-🚀 **[View Live Application](https://talentflow-entnt.vercel.app/)**
-
-📁 **[GitHub Repository](https://github.com/nitianvinaypatel/talentflow)**
+- ** Seed Data**: 25+ jobs (mixed active/archived), 1000+ candidates across all stages, 3+ comprehensive assessments
+- ** Network Simulation**: 200-1200ms artificial latency on all requests
+- ** Error Simulation**: 5-10% failure rate on write operations with proper error handling
+- ** Local Persistence**: IndexedDB via Dexie for all data with write-through from MSW
+- ** State Restoration**: Complete application state restored from IndexedDB on page refresh
 
 ## 🚀 Features
 
@@ -733,69 +727,6 @@ export default defineConfig({
     },
   },
 });
-```
-
-### Deployment Options
-
-#### **Vercel (Recommended)**
-
-```bash
-# Simple deployment
-npm run build
-npx vercel --prod
-```
-
-#### **Netlify**
-
-```bash
-# Build command: npm run build
-# Publish directory: dist
-# Environment variables: None required (frontend-only)
-```
-
-#### **Traditional Hosting**
-
-```bash
-npm run build
-# Upload dist/ folder to your hosting provider
-```
-
-### Environment Configuration
-
-```typescript
-// Environment-aware configuration
-const config = {
-  development: {
-    apiDelay: { min: 200, max: 1200 },
-    errorRate: 0.075,
-    enableMSW: true,
-    enableDevTools: true,
-  },
-  production: {
-    apiDelay: { min: 0, max: 0 },
-    errorRate: 0,
-    enableMSW: false,
-    enableDevTools: false,
-  },
-};
-```
-
-### Performance Monitoring
-
-```typescript
-// Web Vitals tracking
-import { getCLS, getFID, getFCP, getLCP, getTTFB } from "web-vitals";
-
-function sendToAnalytics(metric: any) {
-  // Send to your analytics service
-  console.log(metric);
-}
-
-getCLS(sendToAnalytics);
-getFID(sendToAnalytics);
-getFCP(sendToAnalytics);
-getLCP(sendToAnalytics);
-getTTFB(sendToAnalytics);
 ```
 
 ## � Development Guide
