@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Search, Filter, X, Grid3X3, List, Plus } from "lucide-react";
 import { Button, Badge } from "../../../components/ui";
 import type { JobFilters as JobFiltersType } from "../../../types";

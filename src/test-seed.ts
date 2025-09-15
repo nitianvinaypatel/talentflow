@@ -19,6 +19,8 @@ declare global {
             clearAll: () => Promise<void>;
             clearSeedFlag: () => void;
             clearInProgressFlag: () => void;
+            clearAllFlags: () => void;
+            clearAndReseed: () => Promise<void>;
             removeDuplicates: () => Promise<void>;
         };
     }
@@ -30,10 +32,8 @@ async function initializeTestData() {
         console.log('Checking if database needs seeding...');
 
         // Check localStorage flag as an additional check
-        const lastSeeded = localStorage.getItem('talentflow-last-seeded');
         const seedingInProgress = localStorage.getItem('talentflow-seeding-in-progress');
         const now = Date.now();
-        const oneDayMs = 24 * 60 * 60 * 1000;
 
         // If seeding is already in progress, skip
         if (seedingInProgress) {

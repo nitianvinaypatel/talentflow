@@ -21,6 +21,7 @@ import {
 import type { Candidate, TimelineEvent, Note, Mention } from "../../../types";
 import { CandidateTimeline } from "./candidate-timeline";
 import { CandidateNotes } from "./candidate-notes";
+import { useAppStore } from "../../../lib/store";
 
 interface CandidateProfileProps {
   candidate: Candidate;
@@ -213,12 +214,24 @@ const CandidateProfile: React.FC<CandidateProfileProps> = ({
   candidate,
   onClose,
 }) => {
+  const { updateCandidate, candidates } = useAppStore();
+
+  // Get the latest candidate data from the store
+  const latestCandidate = candidates.find(c => c.id === candidate.id) || candidate;
+
   const [notes, setNotes] = useState<Note[]>(() =>
-    generateMockNotes(candidate)
+    latestCandidate.notes && latestCandidate.notes.length > 0 ? latestCandidate.notes : generateMockNotes(latestCandidate)
   );
   const [timeline] = useState<TimelineEvent[]>(() =>
-    generateMockTimeline(candidate)
+    generateMockTimeline(latestCandidate)
   );
+
+  // Sync notes with the latest candidate data from store
+  React.useEffect(() => {
+    if (latestCandidate.notes && latestCandidate.notes.length > 0) {
+      setNotes(latestCandidate.notes);
+    }
+  }, [latestCandidate.notes]);
 
   // Handle case where candidate is undefined or missing required properties
   if (!candidate || !candidate.stage) {
@@ -259,7 +272,7 @@ const CandidateProfile: React.FC<CandidateProfileProps> = ({
     border: "border-gray-500/30",
   };
 
-  const handleAddNote = (content: string, mentions: Mention[]) => {
+  const handleAddNote = async (content: string, mentions: Mention[]) => {
     const newNote: Note = {
       id: `note-${Date.now()}`,
       content,
@@ -268,23 +281,70 @@ const CandidateProfile: React.FC<CandidateProfileProps> = ({
       createdAt: new Date(),
       mentions,
     };
-    setNotes((prev) => [newNote, ...prev]);
+
+    console.log('Adding note:', newNote);
+    console.log('Current notes:', notes);
+
+    // Update local state immediately for optimistic UI
+    const updatedNotes = [newNote, ...notes];
+    setNotes(updatedNotes);
+
+    console.log('Updated notes:', updatedNotes);
+
+    try {
+      // Persist to database via store
+      console.log('Calling updateCandidate with notes:', updatedNotes);
+      await updateCandidate(candidate.id, { notes: updatedNotes });
+      console.log('Note saved successfully');
+    } catch (error) {
+      console.error('Failed to save note:', error);
+      // Rollback on error
+      setNotes(notes);
+    }
   };
 
-  const handleEditNote = (
+  const handleEditNote = async (
     noteId: string,
     content: string,
     mentions: Mention[]
   ) => {
-    setNotes((prev) =>
-      prev.map((note) =>
-        note.id === noteId ? { ...note, content, mentions } : note
-      )
+    console.log('Editing note:', noteId, content);
+    const updatedNotes = notes.map((note) =>
+      note.id === noteId ? { ...note, content, mentions } : note
     );
+
+    // Update local state immediately for optimistic UI
+    setNotes(updatedNotes);
+
+    try {
+      // Persist to database via store
+      console.log('Calling updateCandidate for edit with notes:', updatedNotes);
+      await updateCandidate(candidate.id, { notes: updatedNotes });
+      console.log('Note updated successfully');
+    } catch (error) {
+      console.error('Failed to update note:', error);
+      // Rollback on error
+      setNotes(notes);
+    }
   };
 
-  const handleDeleteNote = (noteId: string) => {
-    setNotes((prev) => prev.filter((note) => note.id !== noteId));
+  const handleDeleteNote = async (noteId: string) => {
+    console.log('Deleting note:', noteId);
+    const updatedNotes = notes.filter((note) => note.id !== noteId);
+
+    // Update local state immediately for optimistic UI
+    setNotes(updatedNotes);
+
+    try {
+      // Persist to database via store
+      console.log('Calling updateCandidate for delete with notes:', updatedNotes);
+      await updateCandidate(candidate.id, { notes: updatedNotes });
+      console.log('Note deleted successfully');
+    } catch (error) {
+      console.error('Failed to delete note:', error);
+      // Rollback on error
+      setNotes(notes);
+    }
   };
 
   return (
@@ -532,7 +592,7 @@ const CandidateProfile: React.FC<CandidateProfileProps> = ({
                   <span className="text-sm font-medium text-white">
                     {Math.floor(
                       (Date.now() - new Date(candidate.appliedAt).getTime()) /
-                        (1000 * 60 * 60 * 24)
+                      (1000 * 60 * 60 * 24)
                     )}
                   </span>
                 </div>

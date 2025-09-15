@@ -6,8 +6,6 @@ import {
   Briefcase,
   AlertCircle,
   RefreshCw,
-  Grid3X3,
-  List,
 } from "lucide-react";
 import {
   Button,
