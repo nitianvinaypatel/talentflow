@@ -23,6 +23,7 @@ import { JobCard } from "./job-card";
 import { JobCardSkeletonGrid } from "./job-card-skeleton";
 import { JobModal } from "./job-modal";
 import { JobReorderList } from "./job-reorder-list";
+import { JobFilters } from "./job-filters";
 import { useJobs } from "../hooks/use-jobs";
 import { formDataToJob, type JobFormData } from "../types";
 import type { Job } from "../../../types";
@@ -45,6 +46,11 @@ export function JobsBoard() {
 
   // Ensure jobs is always an array
   const safeJobs = Array.isArray(jobs) ? jobs : [];
+
+  // Extract available tags from all jobs
+  const availableTags = Array.from(
+    new Set(safeJobs.flatMap(job => job.tags || []))
+  ).sort();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
@@ -139,117 +145,16 @@ export function JobsBoard() {
           style={{ backgroundColor: "#0d1025" }}
         >
           <CardContent className="p-6">
-            {/* Combined Search, Status Filter, and View Mode */}
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-              {/* Search - Made shorter */}
-              <div className="relative w-80">
-                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.35-4.35"></path>
-                  </svg>
-                </div>
-                <input
-                  type="text"
-                  placeholder="Search jobs..."
-                  value={jobsFilters.search || ""}
-                  onChange={(e) => setJobsFilters({ search: e.target.value })}
-                  className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-600 rounded-md text-white placeholder:text-gray-400 focus:outline-none focus:border-blue-500"
-                />
-              </div>
-
-              {/* Status Filter Buttons */}
-              <div className="flex gap-2">
-                <Button
-                  variant={jobsFilters.status === "all" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setJobsFilters({ status: "all" })}
-                  className={
-                    jobsFilters.status === "all"
-                      ? "bg-blue-600 hover:bg-blue-700 text-white"
-                      : "border-gray-600 bg-gray-800 text-gray-300 hover:bg-gray-700"
-                  }
-                >
-                  All Jobs
-                </Button>
-                <Button
-                  variant={
-                    jobsFilters.status === "active" ? "default" : "outline"
-                  }
-                  size="sm"
-                  onClick={() => setJobsFilters({ status: "active" })}
-                  className={
-                    jobsFilters.status === "active"
-                      ? "bg-blue-600 hover:bg-blue-700 text-white"
-                      : "border-gray-600 bg-gray-800 text-gray-300 hover:bg-gray-700"
-                  }
-                >
-                  Active
-                </Button>
-                <Button
-                  variant={
-                    jobsFilters.status === "archived" ? "default" : "outline"
-                  }
-                  size="sm"
-                  onClick={() => setJobsFilters({ status: "archived" })}
-                  className={
-                    jobsFilters.status === "archived"
-                      ? "bg-blue-600 hover:bg-blue-700 text-white"
-                      : "border-gray-600 bg-gray-800 text-gray-300 hover:bg-gray-700"
-                  }
-                >
-                  Archived
-                </Button>
-              </div>
-
-              {/* View Mode Buttons */}
-              <div className="flex gap-1 border border-gray-600 rounded-md p-1 bg-gray-800">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setViewMode("grid")}
-                  className={`h-8 px-3 ${
-                    viewMode === "grid"
-                      ? "bg-blue-600 text-white hover:bg-blue-700"
-                      : "text-gray-300 hover:bg-gray-700"
-                  }`}
-                >
-                  <Grid3X3 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setViewMode("list")}
-                  className={`h-8 px-3 ${
-                    viewMode === "list"
-                      ? "bg-blue-600 text-white hover:bg-blue-700"
-                      : "text-gray-300 hover:bg-gray-700"
-                  }`}
-                >
-                  <List className="h-4 w-4" />
-                </Button>
-              </div>
-
-              {/* Create Job Button */}
-              <div className="ml-auto">
-                <Button
-                  onClick={() => setIsCreateModalOpen(true)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Job
-                </Button>
-              </div>
+            <div className="space-y-4">
+              {/* Job Filters Component */}
+              <JobFilters
+                filters={jobsFilters}
+                onFiltersChange={setJobsFilters}
+                availableTags={availableTags}
+                viewMode={viewMode}
+                onViewModeChange={setViewMode}
+                onCreateJob={() => setIsCreateModalOpen(true)}
+              />
             </div>
           </CardContent>
         </Card>
@@ -260,9 +165,10 @@ export function JobsBoard() {
             className="border border-gray-700"
             style={{ backgroundColor: "#0d1025" }}
           >
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                {/* Results Info */}
+                <div className="flex items-center gap-2 text-center sm:text-left">
                   <span className="text-sm font-medium text-gray-300">
                     Showing{" "}
                     <span className="font-bold text-blue-400">
@@ -286,10 +192,11 @@ export function JobsBoard() {
                   </span>
                 </div>
 
-                <div className="flex items-center gap-4">
+                {/* Controls */}
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
                   {/* Page Size Selector */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-gray-300">
+                  <div className="flex items-center justify-center gap-2 sm:justify-start">
+                    <span className="text-sm font-medium text-gray-300 whitespace-nowrap">
                       Show:
                     </span>
                     <Select
@@ -310,7 +217,7 @@ export function JobsBoard() {
                   </div>
 
                   {/* Page Navigation */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2 flex-wrap">
                     <Button
                       variant="outline"
                       size="sm"
@@ -318,24 +225,26 @@ export function JobsBoard() {
                       disabled={jobsPagination.page <= 1}
                       className="border-gray-600 bg-gray-800 text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <ChevronLeft className="h-4 w-4 mr-1" />
-                      Previous
+                      <ChevronLeft className="h-4 w-4 sm:mr-1" />
+                      <span className="hidden sm:inline">Previous</span>
                     </Button>
 
-                    {/* Page Numbers */}
+                    {/* Page Numbers - Responsive */}
                     <div className="flex items-center gap-1">
                       {Array.from(
-                        { length: Math.min(5, totalPages) },
+                        { length: Math.min(window.innerWidth < 640 ? 3 : 5, totalPages) },
                         (_, i) => {
                           let pageNum;
-                          if (totalPages <= 5) {
+                          const maxPages = window.innerWidth < 640 ? 3 : 5;
+
+                          if (totalPages <= maxPages) {
                             pageNum = i + 1;
-                          } else if (jobsPagination.page <= 3) {
+                          } else if (jobsPagination.page <= Math.ceil(maxPages / 2)) {
                             pageNum = i + 1;
-                          } else if (jobsPagination.page >= totalPages - 2) {
-                            pageNum = totalPages - 4 + i;
+                          } else if (jobsPagination.page >= totalPages - Math.floor(maxPages / 2)) {
+                            pageNum = totalPages - maxPages + 1 + i;
                           } else {
-                            pageNum = jobsPagination.page - 2 + i;
+                            pageNum = jobsPagination.page - Math.floor(maxPages / 2) + i;
                           }
 
                           return (
@@ -348,11 +257,10 @@ export function JobsBoard() {
                               }
                               size="sm"
                               onClick={() => handlePageChange(pageNum)}
-                              className={`w-10 h-8 ${
-                                pageNum === jobsPagination.page
-                                  ? "bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
-                                  : "border-gray-600 bg-gray-800 text-white hover:bg-gray-700"
-                              }`}
+                              className={`w-8 h-8 sm:w-10 text-xs sm:text-sm ${pageNum === jobsPagination.page
+                                ? "bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
+                                : "border-gray-600 bg-gray-800 text-white hover:bg-gray-700"
+                                }`}
                             >
                               {pageNum}
                             </Button>
@@ -368,8 +276,8 @@ export function JobsBoard() {
                       disabled={jobsPagination.page >= totalPages}
                       className="border-gray-600 bg-gray-800 text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Next
-                      <ChevronRight className="h-4 w-4 ml-1" />
+                      <span className="hidden sm:inline">Next</span>
+                      <ChevronRight className="h-4 w-4 sm:ml-1" />
                     </Button>
                   </div>
                 </div>
@@ -432,8 +340,8 @@ export function JobsBoard() {
                       </h3>
                       <p className="text-gray-300 mb-8 text-lg leading-relaxed">
                         {jobsFilters.search ||
-                        jobsFilters.status !== "all" ||
-                        (jobsFilters.tags && jobsFilters.tags.length > 0)
+                          jobsFilters.status !== "all" ||
+                          (jobsFilters.tags && jobsFilters.tags.length > 0)
                           ? "No jobs match your current filters. Try adjusting your search criteria to discover more opportunities."
                           : "Ready to start building your team? Create your first job posting and begin attracting top talent."}
                       </p>

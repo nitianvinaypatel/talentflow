@@ -16,9 +16,9 @@ const safeArrayAccess = <T>(value: T[] | null | undefined): T[] => {
         stack: new Error().stack
     });
     // Auto-fix: If we detect a response object with .data property, extract it
-    if (value && typeof value === 'object' && 'data' in value && Array.isArray((value as {data: unknown[]}).data)) {
+    if (value && typeof value === 'object' && 'data' in value && Array.isArray((value as { data: unknown[] }).data)) {
         console.warn('Auto-fixing: Extracting data array from response object');
-        return (value as {data: T[]}).data;
+        return (value as { data: T[] }).data;
     }
     return [];
 };
@@ -70,6 +70,9 @@ const initialState = {
     // Optimistic updates
     pendingUpdates: [],
 };
+
+// Global seeding lock to prevent concurrent seeding operations
+let seedingPromise: Promise<void> | null = null;
 
 export const useAppStore = create<AppStore>()(
     persist(
@@ -171,7 +174,7 @@ export const useAppStore = create<AppStore>()(
                     get().setLoading('createJob', true);
                     get().setError('createJob', null);
 
-                    const response = await apiClient.post<{data: Job, success: boolean}>('/api/jobs', newJob);
+                    const response = await apiClient.post<{ data: Job, success: boolean }>('/api/jobs', newJob);
 
                     // Update with server response
                     set((state) => ({
@@ -221,7 +224,7 @@ export const useAppStore = create<AppStore>()(
                     get().setLoading('updateJob', true);
                     get().setError('updateJob', null);
 
-                    const response = await apiClient.patch<{data: Job, success: boolean}>(`/api/jobs/${id}`, updates);
+                    const response = await apiClient.patch<{ data: Job, success: boolean }>(`/api/jobs/${id}`, updates);
 
                     // Update with server response
                     set((state) => ({
@@ -336,7 +339,7 @@ export const useAppStore = create<AppStore>()(
                     get().setLoading('loadJobs', true);
                     get().setError('loadJobs', null);
 
-                    const response = await apiClient.get<{data: Job[], success: boolean}>('/api/jobs');
+                    const response = await apiClient.get<{ data: Job[], success: boolean }>('/api/jobs');
                     set({ jobs: response.data });
                 } catch (error: unknown) {
                     const errorMessage = error instanceof Error ? error.message : 'Failed to load jobs';
@@ -354,7 +357,7 @@ export const useAppStore = create<AppStore>()(
                     get().setLoading('loadCandidates', true);
                     get().setError('loadCandidates', null);
 
-                    const response = await apiClient.get<{data: Candidate[], success: boolean}>('/api/candidates');
+                    const response = await apiClient.get<{ data: Candidate[], success: boolean }>('/api/candidates');
                     set({ candidates: response.data });
                 } catch (error: unknown) {
                     const errorMessage = error instanceof Error ? error.message : 'Failed to load candidates';
@@ -372,7 +375,7 @@ export const useAppStore = create<AppStore>()(
                     get().setLoading('loadAssessments', true);
                     get().setError('loadAssessments', null);
 
-                    const response = await apiClient.get<{data: Assessment[], success: boolean}>('/api/assessments');
+                    const response = await apiClient.get<{ data: Assessment[], success: boolean }>('/api/assessments');
                     set({ assessments: response.data });
                 } catch (error: unknown) {
                     const errorMessage = error instanceof Error ? error.message : 'Failed to load assessments';
@@ -420,7 +423,7 @@ export const useAppStore = create<AppStore>()(
                     get().setLoading('createCandidate', true);
                     get().setError('createCandidate', null);
 
-                    const response = await apiClient.post<{data: Candidate, success: boolean}>('/api/candidates', newCandidate);
+                    const response = await apiClient.post<{ data: Candidate, success: boolean }>('/api/candidates', newCandidate);
 
                     set((state) => ({
                         candidates: (state.candidates || []).map((candidate) =>
@@ -443,12 +446,18 @@ export const useAppStore = create<AppStore>()(
                 }
             },
             updateCandidate: async (id, updates) => {
+                console.log('Store updateCandidate called:', { id, updates });
                 const updateId = nanoid();
                 const state = get();
                 const originalCandidate = (state.candidates || []).find((candidate) => candidate.id === id);
-                if (!originalCandidate) return;
+                if (!originalCandidate) {
+                    console.error('Original candidate not found:', id);
+                    return;
+                }
 
+                console.log('Original candidate:', originalCandidate);
                 const updatedCandidate = { ...originalCandidate, ...updates, updatedAt: new Date() };
+                console.log('Updated candidate:', updatedCandidate);
 
                 // Optimistic update
                 set((state) => ({
@@ -469,7 +478,7 @@ export const useAppStore = create<AppStore>()(
                     get().setLoading('updateCandidate', true);
                     get().setError('updateCandidate', null);
 
-                    const response = await apiClient.patch<{data: Candidate, success: boolean}>(`/api/candidates/${id}`, updates);
+                    const response = await apiClient.patch<{ data: Candidate, success: boolean }>(`/api/candidates/${id}`, updates);
 
                     set((state) => ({
                         candidates: (state.candidates || []).map((candidate) =>
@@ -542,7 +551,7 @@ export const useAppStore = create<AppStore>()(
                 };
 
                 // Optimistic update
-                set((state) => { 
+                set((state) => {
                     const currentAssessments = safeArrayAccess(state.assessments);
                     return { assessments: [...currentAssessments, newAssessment] };
                 });
@@ -558,7 +567,7 @@ export const useAppStore = create<AppStore>()(
                     get().setLoading('createAssessment', true);
                     get().setError('createAssessment', null);
 
-                    const response = await apiClient.post<{data: Assessment, success: boolean}>('/api/assessments', newAssessment);
+                    const response = await apiClient.post<{ data: Assessment, success: boolean }>('/api/assessments', newAssessment);
 
                     set((state) => {
                         const currentAssessments = safeArrayAccess(state.assessments);
@@ -613,7 +622,7 @@ export const useAppStore = create<AppStore>()(
                     get().setLoading('updateAssessment', true);
                     get().setError('updateAssessment', null);
 
-                    const response = await apiClient.patch<{data: Assessment, success: boolean}>(`/api/assessments/${id}`, updates);
+                    const response = await apiClient.patch<{ data: Assessment, success: boolean }>(`/api/assessments/${id}`, updates);
 
                     set((state) => ({
                         assessments: (Array.isArray(state.assessments) ? state.assessments : []).map((assessment) =>
@@ -682,9 +691,9 @@ export const useAppStore = create<AppStore>()(
 
                     // Load fresh data from API
                     const [jobsResponse, candidatesResponse, assessmentsResponse] = await Promise.all([
-                        apiClient.get<{data: Job[], success: boolean}>('/api/jobs'),
-                        apiClient.get<{data: Candidate[], success: boolean}>('/api/candidates'),
-                        apiClient.get<{data: Assessment[], success: boolean}>('/api/assessments'),
+                        apiClient.get<{ data: Job[], success: boolean }>('/api/jobs'),
+                        apiClient.get<{ data: Candidate[], success: boolean }>('/api/candidates'),
+                        apiClient.get<{ data: Assessment[], success: boolean }>('/api/assessments'),
                     ]);
 
                     set({
@@ -777,23 +786,24 @@ export const useAppStore = create<AppStore>()(
                         const lastSeeded = localStorage.getItem('talentflow-last-seeded');
                         const seedingInProgress = localStorage.getItem('talentflow-seeding-in-progress');
                         const now = Date.now();
-                        const fiveMinutesMs = 5 * 60 * 1000; // 5 minutes
-                        
-                        const recentlySeeded = lastSeeded && (now - parseInt(lastSeeded)) < fiveMinutesMs;
-                        
-                        if (seedingInProgress || recentlySeeded) {
+                        const tenMinutesMs = 10 * 60 * 1000; // 10 minutes
+
+                        const recentlySeeded = lastSeeded && (now - parseInt(lastSeeded)) < tenMinutesMs;
+
+                        if (seedingInProgress) {
                             if (import.meta.env.DEV) {
-                                console.log('Seeding was done recently or is in progress. Using existing data or retrying...');
+                                console.log('Seeding is in progress. Waiting for completion...');
                             }
-                            // Try to reload data one more time in case seeding just completed
+                            // Wait a bit and try to reload data
+                            await new Promise(resolve => setTimeout(resolve, 2000));
                             const [retryJobs, retryCandidates, retryAssessments] = await Promise.all([
                                 db.jobs.toArray(),
                                 db.candidates.toArray(),
                                 db.assessments.toArray(),
                             ]);
-                            
+
                             if (retryJobs.length > 0) {
-                                set({ 
+                                set({
                                     jobs: retryJobs.map(job => ({
                                         ...job,
                                         createdAt: normalizeDate(job.createdAt),
@@ -820,18 +830,74 @@ export const useAppStore = create<AppStore>()(
                                 return;
                             }
                         }
-                        
+
+                        if (recentlySeeded) {
+                            if (import.meta.env.DEV) {
+                                console.log('Database was recently seeded, but database is empty. Clearing flags and proceeding with reseed.');
+                            }
+                            // If database is empty but we have a recent seed flag, clear it
+                            localStorage.removeItem('talentflow-last-seeded');
+                            localStorage.removeItem('talentflow-seeding-in-progress');
+                        }
+
                         if (import.meta.env.DEV) {
                             console.log('Database is empty or has corrupted data, reseeding...');
                         }
-                        
-                        // Set seeding in progress flag
+
+                        // Use global seeding lock to prevent concurrent operations
+                        if (seedingPromise) {
+                            if (import.meta.env.DEV) {
+                                console.log('Seeding already in progress globally. Waiting...');
+                            }
+                            await seedingPromise;
+                            // After waiting, try to reload data
+                            const [retryJobs, retryCandidates, retryAssessments] = await Promise.all([
+                                db.jobs.toArray(),
+                                db.candidates.toArray(),
+                                db.assessments.toArray(),
+                            ]);
+
+                            if (retryJobs.length > 0) {
+                                set({
+                                    jobs: retryJobs.map(job => ({
+                                        ...job,
+                                        createdAt: normalizeDate(job.createdAt),
+                                        updatedAt: normalizeDate(job.updatedAt),
+                                        requirements: Array.isArray(job.requirements) ? job.requirements : [],
+                                        tags: Array.isArray(job.tags) ? job.tags : [],
+                                        type: job.type || 'full-time',
+                                    })),
+                                    candidates: retryCandidates.map(candidate => ({
+                                        ...candidate,
+                                        appliedAt: normalizeDate(candidate.appliedAt),
+                                        updatedAt: normalizeDate(candidate.updatedAt),
+                                        notes: Array.isArray(candidate.notes) ? candidate.notes : [],
+                                        assessmentResponses: Array.isArray(candidate.assessmentResponses) ? candidate.assessmentResponses : [],
+                                        timeline: Array.isArray(candidate.timeline) ? candidate.timeline : [],
+                                    })),
+                                    assessments: retryAssessments.map(assessment => ({
+                                        ...assessment,
+                                        createdAt: normalizeDate(assessment.createdAt),
+                                        updatedAt: normalizeDate(assessment.updatedAt),
+                                        sections: Array.isArray(assessment.sections) ? assessment.sections : [],
+                                    }))
+                                });
+                            }
+                            return;
+                        }
+
+                        // Set seeding in progress flag to prevent concurrent seeding
                         localStorage.setItem('talentflow-seeding-in-progress', 'true');
-                        
-                        try {
+
+                        // Create and store the seeding promise
+                        seedingPromise = (async () => {
                             const { resetAndSeedDatabase } = await import('../db/seed');
                             await resetAndSeedDatabase();
-                            
+                        })();
+
+                        try {
+                            await seedingPromise;
+
                             // Set completion flag
                             localStorage.setItem('talentflow-last-seeded', now.toString());
 
@@ -841,7 +907,7 @@ export const useAppStore = create<AppStore>()(
                                 db.candidates.toArray(),
                                 db.assessments.toArray(),
                             ]);
-                            
+
                             // Normalize the reseeded data too
                             const normalizedSeededJobs = seededJobs.map(job => ({
                                 ...job,
@@ -874,8 +940,9 @@ export const useAppStore = create<AppStore>()(
                                 assessments: normalizedSeededAssessments,
                             });
                         } finally {
-                            // Always clear the in-progress flag
+                            // Always clear the in-progress flag and global seeding promise
                             localStorage.removeItem('talentflow-seeding-in-progress');
+                            seedingPromise = null;
                         }
                     } else {
                         set({
@@ -910,8 +977,17 @@ export const useAppStore = create<AppStore>()(
                         console.log('Force reseeding database...');
                     }
 
-                    const { resetAndSeedDatabase } = await import('../db/seed');
-                    await resetAndSeedDatabase();
+                    // Use global seeding lock for force reseed too
+                    if (seedingPromise) {
+                        await seedingPromise;
+                    }
+
+                    seedingPromise = (async () => {
+                        const { resetAndSeedDatabase } = await import('../db/seed');
+                        await resetAndSeedDatabase();
+                    })();
+
+                    await seedingPromise;
 
                     // Reload data after seeding
                     const [jobs, candidates, assessments] = await Promise.all([
@@ -976,6 +1052,7 @@ export const useAppStore = create<AppStore>()(
                     }
                 } finally {
                     get().setLoading('forceReseed', false);
+                    seedingPromise = null;
                 }
             },
         }),
@@ -990,13 +1067,20 @@ export const useAppStore = create<AppStore>()(
                 candidatesFilters: state.candidatesFilters,
                 assessmentBuilder: state.assessmentBuilder,
             }),
-            // Ensure arrays are always arrays during hydration
+            // Ensure arrays are always arrays during hydration and load data from IndexedDB
             onRehydrateStorage: () => (state) => {
                 if (state) {
                     if (!Array.isArray(state.jobs)) state.jobs = [];
                     if (!Array.isArray(state.candidates)) state.candidates = [];
                     if (!Array.isArray(state.assessments)) state.assessments = [];
                 }
+                // Auto-load data from IndexedDB after hydration
+                setTimeout(() => {
+                    const store = useAppStore.getState();
+                    store.loadFromStorage().catch(() => {
+                        // Silent error handling for auto-load
+                    });
+                }, 100);
             },
         }
     )

@@ -15,7 +15,7 @@ async function simulateNetworkConditions(isWriteOperation = false) {
     await sleep(delay);
 
     // Only simulate errors in development
-    if (import.meta.env.DEV && isWriteOperation && Math.random() < 0.075) { // 7.5% error rate
+    if (import.meta.env.DEV && isWriteOperation && Math.random() < 0.01) { // 1% error rate
         throw new Error('Simulated server error');
     }
 }
@@ -113,7 +113,7 @@ export const handlers = [
     http.get('/jobs', async ({ request }) => {
         try {
             await simulateNetworkConditions(false);
-            
+
             const url = new URL(request.url);
             const page = parseInt(url.searchParams.get('page') || '1');
             const pageSize = parseInt(url.searchParams.get('pageSize') || '10');
@@ -393,7 +393,10 @@ export const handlers = [
         const { id } = params;
         const updates = await request.json();
 
+        console.log('API handler PATCH /api/candidates/:id:', { id, updates });
+
         const updatedCandidate = await CandidatesService.update(id, updates);
+        console.log('CandidatesService.update result:', updatedCandidate);
 
         if (!updatedCandidate) {
             return HttpResponse.json(

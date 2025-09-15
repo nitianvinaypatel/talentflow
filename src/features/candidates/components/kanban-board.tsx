@@ -124,19 +124,39 @@ export const KanbanBoard = ({
     const { active, over } = event;
     setActiveCandidate(null);
 
-    if (!over) return;
+    if (!over) {
+      console.log("No drop target found");
+      return;
+    }
 
     const candidateId = active.id as string;
     const newStage = over.id as Candidate["stage"];
 
+    console.log("Drag end:", { candidateId, newStage, overId: over.id });
+
     const candidate = candidates.find((c) => c.id === candidateId);
-    if (!candidate || candidate.stage === newStage) return;
+    if (!candidate) {
+      console.error("Candidate not found:", candidateId);
+      return;
+    }
+
+    if (candidate.stage === newStage) {
+      console.log("Stage unchanged:", candidate.stage);
+      return;
+    }
+
+    console.log("Updating candidate stage:", {
+      candidateId,
+      currentStage: candidate.stage,
+      newStage,
+    });
 
     // Optimistic update with improved error handling
     setIsUpdating(candidateId);
 
     try {
       await updateCandidate(candidateId, { stage: newStage });
+      console.log("Successfully updated candidate stage");
     } catch (error) {
       console.error("Failed to update candidate stage:", error);
       // The store's optimistic update will handle rollback

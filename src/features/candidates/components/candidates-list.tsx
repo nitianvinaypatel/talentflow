@@ -224,11 +224,10 @@ export const CandidatesList = memo(() => {
                 variant={viewMode === "list" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setViewMode("list")}
-                className={`h-10 px-4 rounded-lg transition-all duration-200 ${
-                  viewMode === "list"
-                    ? "bg-blue-600 text-white hover:bg-blue-700"
-                    : "text-gray-400 hover:bg-gray-700 hover:text-white"
-                }`}
+                className={`h-10 px-4 rounded-lg transition-all duration-200 ${viewMode === "list"
+                  ? "bg-blue-600 text-white hover:bg-blue-700"
+                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
+                  }`}
               >
                 <List className="h-4 w-4" />
               </Button>
@@ -236,11 +235,10 @@ export const CandidatesList = memo(() => {
                 variant={viewMode === "kanban" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setViewMode("kanban")}
-                className={`h-10 px-4 rounded-lg transition-all duration-200 ${
-                  viewMode === "kanban"
-                    ? "bg-blue-600 text-white hover:bg-blue-700"
-                    : "text-gray-400 hover:bg-gray-700 hover:text-white"
-                }`}
+                className={`h-10 px-4 rounded-lg transition-all duration-200 ${viewMode === "kanban"
+                  ? "bg-blue-600 text-white hover:bg-blue-700"
+                  : "text-gray-400 hover:bg-gray-700 hover:text-white"
+                  }`}
               >
                 <Grid3X3 className="h-4 w-4" />
               </Button>
@@ -288,7 +286,7 @@ export const CandidatesList = memo(() => {
           </div>
         ) : (
           <div
-            className="h-[700px] border border-gray-700 rounded-lg overflow-hidden"
+            className="h-[700px] w-[1600px] border border-gray-700 rounded-lg"
             style={{ backgroundColor: "#0d1025" }}
           >
             <CandidatesKanbanView />

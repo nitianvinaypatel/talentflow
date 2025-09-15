@@ -28,35 +28,32 @@ declare global {
 async function initializeTestData() {
     try {
         console.log('Checking if database needs seeding...');
-        
+
         // Check localStorage flag as an additional check
         const lastSeeded = localStorage.getItem('talentflow-last-seeded');
         const seedingInProgress = localStorage.getItem('talentflow-seeding-in-progress');
         const now = Date.now();
         const oneDayMs = 24 * 60 * 60 * 1000;
-        
+
         // If seeding is already in progress, skip
         if (seedingInProgress) {
             console.log('Seeding already in progress. Skipping.');
             return;
         }
-        
-        // If we seeded within the last day and the flag exists, skip database check
-        if (lastSeeded && (now - parseInt(lastSeeded)) < oneDayMs) {
-            console.log('Database was recently seeded. Skipping seed check.');
-            return;
-        }
-        
+
+        // Always check database content, even if recently seeded flag exists
+        // This ensures we reseed if database was manually cleared
+
         // Set flag to prevent concurrent seeding
         localStorage.setItem('talentflow-seeding-in-progress', 'true');
-        
+
         try {
             const needsSeeding = await shouldSeedDatabase();
-            
+
             if (needsSeeding) {
                 console.log('Database is empty or incomplete. Seeding with test data...');
                 await seedDatabase();
-                
+
                 // Set flag to indicate successful seeding
                 localStorage.setItem('talentflow-last-seeded', now.toString());
                 console.log('Test data seeded successfully!');
@@ -89,17 +86,29 @@ if (import.meta.env.DEV) {
         clearAll: () => DatabaseService.clearAll(),
         clearSeedFlag: () => localStorage.removeItem('talentflow-last-seeded'),
         clearInProgressFlag: () => localStorage.removeItem('talentflow-seeding-in-progress'),
+        clearAllFlags: () => {
+            localStorage.removeItem('talentflow-last-seeded');
+            localStorage.removeItem('talentflow-seeding-in-progress');
+            console.log('Cleared all seeding flags');
+        },
+        clearAndReseed: async () => {
+            localStorage.removeItem('talentflow-last-seeded');
+            localStorage.removeItem('talentflow-seeding-in-progress');
+            await DatabaseService.clearAll();
+            await seedDatabase();
+            console.log('Cleared database and reseeded successfully');
+        },
         removeDuplicates: async () => {
             console.log('Removing duplicate jobs...');
             const db = (await import('./lib/db')).db;
-            
+
             // Get all jobs
             const allJobs = await db.jobs.toArray();
-            
+
             // Group by title and remove duplicates, keeping the first one
             const seen = new Set();
             const duplicateIds = [];
-            
+
             for (const job of allJobs) {
                 if (seen.has(job.title)) {
                     duplicateIds.push(job.id);
@@ -107,39 +116,39 @@ if (import.meta.env.DEV) {
                     seen.add(job.title);
                 }
             }
-            
+
             if (duplicateIds.length > 0) {
                 console.log(`Removing ${duplicateIds.length} duplicate jobs`);
                 await db.jobs.bulkDelete(duplicateIds);
-                
+
                 // Also remove candidates and assessments for the deleted jobs
                 const candidatesToDelete = await db.candidates
                     .where('jobId')
                     .anyOf(duplicateIds)
                     .toArray();
-                
+
                 const assessmentsToDelete = await db.assessments
                     .where('jobId')
                     .anyOf(duplicateIds)
                     .toArray();
-                
+
                 if (candidatesToDelete.length > 0) {
                     await db.candidates.bulkDelete(candidatesToDelete.map(c => c.id));
                     console.log(`Removed ${candidatesToDelete.length} candidates for duplicate jobs`);
                 }
-                
+
                 if (assessmentsToDelete.length > 0) {
                     await db.assessments.bulkDelete(assessmentsToDelete.map(a => a.id));
                     console.log(`Removed ${assessmentsToDelete.length} assessments for duplicate jobs`);
                 }
-                
+
                 console.log('Duplicate removal completed');
             } else {
                 console.log('No duplicates found');
             }
         }
     };
-    
+
     console.log('TalentFlow DB utilities available at window.talentflowDB');
     initializeTestData();
 }

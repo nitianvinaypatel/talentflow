@@ -117,11 +117,22 @@ export class CandidatesService {
     }
 
     static async update(id: string, updates: Partial<Candidate>): Promise<Candidate | null> {
+        console.log('CandidatesService.update called:', { id, updates });
         const existingCandidate = await db.candidates.get(id);
-        if (!existingCandidate) return null;
+        if (!existingCandidate) {
+            console.error('Existing candidate not found in DB:', id);
+            return null;
+        }
 
+        console.log('Existing candidate from DB:', existingCandidate);
         const updatedCandidate = { ...existingCandidate, ...updates, updatedAt: new Date() };
+        console.log('About to update candidate in DB:', updatedCandidate);
+
         await db.candidates.update(id, updatedCandidate);
+
+        // Verify the update worked
+        const verifyCandidate = await db.candidates.get(id);
+        console.log('Candidate after DB update:', verifyCandidate);
 
         // Create timeline event for stage changes
         if (updates.stage && updates.stage !== existingCandidate.stage) {

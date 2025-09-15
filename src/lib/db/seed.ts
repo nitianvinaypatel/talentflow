@@ -67,7 +67,11 @@ const FIRST_NAMES = [
     'Alex', 'Jordan', 'Taylor', 'Morgan', 'Casey', 'Riley', 'Avery', 'Quinn',
     'Sage', 'River', 'Phoenix', 'Rowan', 'Skyler', 'Cameron', 'Dakota',
     'Emery', 'Finley', 'Hayden', 'Indigo', 'Jamie', 'Kai', 'Lane',
-    'Marley', 'Nova', 'Ocean', 'Parker', 'Reese', 'Sage', 'Tatum', 'Vale'
+    'Marley', 'Nova', 'Ocean', 'Parker', 'Reese', 'Tatum', 'Vale',
+    'Blake', 'Drew', 'Ellis', 'Gray', 'Harper', 'Jesse', 'Kendall', 'Logan',
+    'Mason', 'Nico', 'Payton', 'Quinn', 'Remy', 'Shay', 'Teagan', 'Wren',
+    'Adrian', 'Bailey', 'Charlie', 'Devon', 'Eden', 'Frankie', 'Grayson', 'Hunter',
+    'Iris', 'Jules', 'Kris', 'Lennox', 'Max', 'Noel', 'Oakley', 'Presley'
 ];
 
 const LAST_NAMES = [
@@ -75,7 +79,11 @@ const LAST_NAMES = [
     'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez',
     'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin',
     'Lee', 'Perez', 'Thompson', 'White', 'Harris', 'Sanchez', 'Clark',
-    'Ramirez', 'Lewis', 'Robinson', 'Walker', 'Young', 'Allen', 'King'
+    'Ramirez', 'Lewis', 'Robinson', 'Walker', 'Young', 'Allen', 'King',
+    'Wright', 'Scott', 'Torres', 'Nguyen', 'Hill', 'Flores', 'Green',
+    'Adams', 'Nelson', 'Baker', 'Hall', 'Rivera', 'Campbell', 'Mitchell',
+    'Carter', 'Roberts', 'Gomez', 'Phillips', 'Evans', 'Turner', 'Diaz',
+    'Parker', 'Cruz', 'Edwards', 'Collins', 'Reyes', 'Stewart', 'Morris'
 ];
 
 const CANDIDATE_STAGES: Candidate['stage'][] = [
@@ -144,12 +152,39 @@ function generateJob(index: number): Job {
     };
 }
 
+// Track used names to ensure uniqueness
+const usedNames = new Set<string>();
+
 // Candidate generation
 function generateCandidate(jobIds: string[], index: number): Candidate {
-    const firstName = randomChoice(FIRST_NAMES);
-    const lastName = randomChoice(LAST_NAMES);
-    const name = `${firstName} ${lastName}`;
-    const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}.${index}@example.com`;
+    let firstName: string;
+    let lastName: string;
+    let name: string;
+    let attempts = 0;
+    const maxAttempts = 100; // Prevent infinite loops
+
+    // Keep generating until we get a unique name
+    do {
+        firstName = randomChoice(FIRST_NAMES);
+        lastName = randomChoice(LAST_NAMES);
+        name = `${firstName} ${lastName}`;
+        attempts++;
+
+        // If we can't find a unique combination, add a number suffix
+        if (attempts >= maxAttempts) {
+            name = `${firstName} ${lastName} ${index}`;
+            break;
+        }
+    } while (usedNames.has(name));
+
+    // Mark this name as used
+    usedNames.add(name);
+
+    // Generate email based on the actual name used (handle cases with number suffixes)
+    const nameParts = name.split(' ');
+    const emailFirstName = nameParts[0].toLowerCase();
+    const emailLastName = nameParts[1].toLowerCase();
+    const email = `${emailFirstName}.${emailLastName}.${index}@example.com`;
 
     const appliedAt = randomDate(
         new Date(Date.now() - 60 * 24 * 60 * 60 * 1000), // 60 days ago
@@ -333,8 +368,9 @@ function generateStandaloneAssessment(_index: number, title: string): Assessment
 export async function seedDatabase(): Promise<void> {
     console.log('Starting database seeding...');
 
-    // Clear existing data
+    // Clear existing data and reset name tracking
     await DatabaseService.clearAll();
+    usedNames.clear();
 
     // Generate 25 jobs
     console.log('Generating jobs...');
@@ -406,18 +442,18 @@ export async function seedDatabase(): Promise<void> {
 export async function shouldSeedDatabase(): Promise<boolean> {
     try {
         const stats = await DatabaseService.getStats();
-        
+
         // Database needs seeding if it's completely empty
-        const isEmpty = stats.jobsCount === 0 && 
-                       stats.candidatesCount === 0 && 
-                       stats.assessmentsCount === 0;
-        
+        const isEmpty = stats.jobsCount === 0 &&
+            stats.candidatesCount === 0 &&
+            stats.assessmentsCount === 0;
+
         // Only reseed if completely empty to prevent duplicates
         // If there's any data, assume it's intentional or from a previous seed
-        
+
         console.log('Database stats:', stats);
         console.log('Needs seeding:', isEmpty);
-        
+
         return isEmpty;
     } catch (error) {
         console.error('Error checking database state:', error);
