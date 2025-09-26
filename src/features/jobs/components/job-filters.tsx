@@ -145,10 +145,11 @@ export function JobFilters({
                 variant="ghost"
                 size="sm"
                 onClick={() => onViewModeChange("grid")}
-                className={`h-8 px-3 ${viewMode === "grid"
-                  ? "bg-blue-600 text-white hover:bg-blue-700"
-                  : "text-gray-300 hover:bg-gray-700"
-                  }`}
+                className={`h-8 px-3 ${
+                  viewMode === "grid"
+                    ? "bg-blue-600 text-white hover:bg-blue-700"
+                    : "text-gray-300 hover:bg-gray-700"
+                }`}
               >
                 <Grid3X3 className="h-4 w-4" />
               </Button>
@@ -156,10 +157,11 @@ export function JobFilters({
                 variant="ghost"
                 size="sm"
                 onClick={() => onViewModeChange("list")}
-                className={`h-8 px-3 ${viewMode === "list"
-                  ? "bg-blue-600 text-white hover:bg-blue-700"
-                  : "text-gray-300 hover:bg-gray-700"
-                  }`}
+                className={`h-8 px-3 ${
+                  viewMode === "list"
+                    ? "bg-blue-600 text-white hover:bg-blue-700"
+                    : "text-gray-300 hover:bg-gray-700"
+                }`}
               >
                 <List className="h-4 w-4" />
               </Button>
@@ -195,10 +197,11 @@ export function JobFilters({
                 <Badge
                   key={tag}
                   variant={isSelected ? "default" : "outline"}
-                  className={`cursor-pointer ${isSelected
-                    ? "bg-blue-600 text-white hover:bg-blue-700"
-                    : "border-gray-600 bg-gray-800 text-gray-300 hover:bg-gray-700"
-                    }`}
+                  className={`cursor-pointer ${
+                    isSelected
+                      ? "bg-blue-600 text-white hover:bg-blue-700"
+                      : "border-gray-600 bg-gray-800 text-gray-300 hover:bg-gray-700"
+                  }`}
                   onClick={() => handleTagToggle(tag)}
                 >
                   {tag}

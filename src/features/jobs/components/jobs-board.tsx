@@ -47,7 +47,7 @@ export function JobsBoard() {
 
   // Extract available tags from all jobs
   const availableTags = Array.from(
-    new Set(safeJobs.flatMap(job => job.tags || []))
+    new Set(safeJobs.flatMap((job) => job.tags || []))
   ).sort();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -230,19 +230,32 @@ export function JobsBoard() {
                     {/* Page Numbers - Responsive */}
                     <div className="flex items-center gap-1">
                       {Array.from(
-                        { length: Math.min(window.innerWidth < 640 ? 3 : 5, totalPages) },
+                        {
+                          length: Math.min(
+                            window.innerWidth < 640 ? 3 : 5,
+                            totalPages
+                          ),
+                        },
                         (_, i) => {
                           let pageNum;
                           const maxPages = window.innerWidth < 640 ? 3 : 5;
 
                           if (totalPages <= maxPages) {
                             pageNum = i + 1;
-                          } else if (jobsPagination.page <= Math.ceil(maxPages / 2)) {
+                          } else if (
+                            jobsPagination.page <= Math.ceil(maxPages / 2)
+                          ) {
                             pageNum = i + 1;
-                          } else if (jobsPagination.page >= totalPages - Math.floor(maxPages / 2)) {
+                          } else if (
+                            jobsPagination.page >=
+                            totalPages - Math.floor(maxPages / 2)
+                          ) {
                             pageNum = totalPages - maxPages + 1 + i;
                           } else {
-                            pageNum = jobsPagination.page - Math.floor(maxPages / 2) + i;
+                            pageNum =
+                              jobsPagination.page -
+                              Math.floor(maxPages / 2) +
+                              i;
                           }
 
                           return (
@@ -255,10 +268,11 @@ export function JobsBoard() {
                               }
                               size="sm"
                               onClick={() => handlePageChange(pageNum)}
-                              className={`w-8 h-8 sm:w-10 text-xs sm:text-sm ${pageNum === jobsPagination.page
-                                ? "bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
-                                : "border-gray-600 bg-gray-800 text-white hover:bg-gray-700"
-                                }`}
+                              className={`w-8 h-8 sm:w-10 text-xs sm:text-sm ${
+                                pageNum === jobsPagination.page
+                                  ? "bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
+                                  : "border-gray-600 bg-gray-800 text-white hover:bg-gray-700"
+                              }`}
                             >
                               {pageNum}
                             </Button>
@@ -338,8 +352,8 @@ export function JobsBoard() {
                       </h3>
                       <p className="text-gray-300 mb-8 text-lg leading-relaxed">
                         {jobsFilters.search ||
-                          jobsFilters.status !== "all" ||
-                          (jobsFilters.tags && jobsFilters.tags.length > 0)
+                        jobsFilters.status !== "all" ||
+                        (jobsFilters.tags && jobsFilters.tags.length > 0)
                           ? "No jobs match your current filters. Try adjusting your search criteria to discover more opportunities."
                           : "Ready to start building your team? Create your first job posting and begin attracting top talent."}
                       </p>
@@ -358,15 +372,21 @@ export function JobsBoard() {
                   {/* Jobs Display */}
                   {viewMode === "grid" ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {safeJobs.map((job) => (
-                        <JobCard
-                          key={job.id}
-                          job={job}
-                          onEdit={handleEditJob}
-                          onToggleStatus={handleToggleJobStatus}
-                          onDelete={handleDeleteJob}
-                        />
-                      ))}
+                      {safeJobs
+                        .sort(
+                          (a: Job, b: Job) =>
+                            new Date(b.createdAt).getTime() -
+                            new Date(a.createdAt).getTime()
+                        )
+                        .map((job) => (
+                          <JobCard
+                            key={job.id}
+                            job={job}
+                            onEdit={handleEditJob}
+                            onToggleStatus={handleToggleJobStatus}
+                            onDelete={handleDeleteJob}
+                          />
+                        ))}
                     </div>
                   ) : (
                     <Card
